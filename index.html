@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Saeed & Wife — Trip Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FDFAF5; --dark:#12100A; --gold:#C8A96E; --gold-light:#F5EDD8;
+  --paris-red:#BF3B3B; --london-red:#C41E3A;
+  --c-breakfast:#FFF8EC; --c-breakfast-t:#92580A;
+  --c-lunch:#FFF1F0; --c-lunch-t:#B52A2A;
+  --c-dinner:#F5F0FF; --c-dinner-t:#5B3EA6;
+  --c-cafe:#FDF3E7; --c-cafe-t:#7A4F1A;
+  --c-museum:#EFF6FF; --c-museum-t:#1D5FA8;
+  --c-park:#EDFAF3; --c-park-t:#1A7A4A;
+  --c-attraction:#FFF5F8; --c-attraction-t:#A82060;
+  --c-shopping:#F0F8FF; --c-shopping-t:#1A5C8F;
+  --c-photo:#FFFBEC; --c-photo-t:#7A6010;
+  --c-romantic:#FFF0F5; --c-romantic-t:#A0205A;
+  --c-gem:#F2F0FF; --c-gem-t:#4A3A9A;
+  --c-halal:#EDFAF3; --c-halal-t:#1A7A4A;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark)}
+body{display:flex;flex-direction:column;height:100dvh}
+
+/* CITY BAR */
+.city-bar{display:flex;background:#0E0C07;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.city-btn{flex:1;padding:11px 6px 9px;border:none;background:transparent;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;color:rgba(255,255,255,0.3);position:relative;transition:color 0.2s}
+.city-btn.active{color:white}
+.city-btn::after{content:'';position:absolute;bottom:0;left:25%;right:25%;height:2px;border-radius:2px;opacity:0;transition:opacity 0.2s}
+.city-btn.active::after{opacity:1}
+.city-btn[data-city="paris"].active::after{background:var(--paris-red)}
+.city-btn[data-city="london"].active::after{background:var(--london-red)}
+.city-flag{font-size:15px;display:block;margin-bottom:1px}
+
+/* HEADER */
+.header{padding:12px 14px 0;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,0.35)}
+.header.paris{background:linear-gradient(160deg,#1A0E0E 0%,#0D0905 100%)}
+.header.london{background:linear-gradient(160deg,#0D1520 0%,#060C14 100%)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.header-title h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;line-height:1;letter-spacing:-0.01em}
+.paris .header-title h1{color:#E8C87A}
+.london .header-title h1{color:#F0F0F0}
+.london .header-title h1 span{color:var(--london-red)}
+.header-title p{font-size:9px;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.12em;text-transform:uppercase}
+.place-count{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;text-align:center}
+.place-count .num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--gold);line-height:1}
+.place-count .lbl{font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:9px}
+.search-wrap input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:8px;padding:8px 12px 8px 32px;font-size:13px;color:white;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+.search-wrap input::placeholder{color:rgba(255,255,255,0.25)}
+.search-wrap input:focus{border-color:rgba(200,169,110,0.4)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;opacity:0.3}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{white-space:nowrap;padding:5px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif}
+.paris .cat-tab.active{background:var(--paris-red);border-color:var(--paris-red);color:white;font-weight:600}
+.london .cat-tab.active{background:var(--london-red);border-color:var(--london-red);color:white;font-weight:600}
+.cat-tab:hover:not(.active){background:rgba(255,255,255,0.09);color:rgba(255,255,255,0.75)}
+
+/* MAIN SCROLL */
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 20px}
+
+/* SECTION LABEL */
+.section-label{display:flex;align-items:center;gap:8px;margin:16px 0 8px}
+.section-label .line{flex:1;height:1px;background:rgba(0,0,0,0.07)}
+.section-label .text{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,0,0,0.28);white-space:nowrap}
+
+/* CARD GRID */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:2px}
+
+/* PLACE CARD */
+.card{background:white;border-radius:14px;overflow:hidden;border:1px solid rgba(0,0,0,0.05);box-shadow:0 1px 8px rgba(0,0,0,0.06);transition:transform 0.12s;cursor:pointer;position:relative}
+.card:active{transform:scale(0.97)}
+
+.card-img{width:100%;height:110px;object-fit:cover;display:block;position:relative;overflow:hidden}
+.card-img-inner{width:100%;height:110px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:38px;position:relative}
+.card-img-inner::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,0.35) 100%)}
+
+/* CATEGORY BADGE — top left on image */
+.cat-badge{position:absolute;top:6px;left:6px;z-index:2;padding:2px 7px;border-radius:99px;font-size:8.5px;font-weight:700;letter-spacing:0.05em;backdrop-filter:blur(6px)}
+/* HALAL BADGE — top right */
+.halal-badge{position:absolute;top:6px;right:6px;z-index:2;background:rgba(26,122,74,0.9);color:white;padding:2px 6px;border-radius:99px;font-size:8px;font-weight:700;letter-spacing:0.05em;backdrop-filter:blur(6px)}
+/* RESERVATION DOT — bottom left on image */
+.res-badge{position:absolute;bottom:6px;left:6px;z-index:2;padding:2px 7px;border-radius:99px;font-size:8px;font-weight:600;backdrop-filter:blur(6px)}
+.res-req{background:rgba(180,40,40,0.88);color:white}
+.res-rec{background:rgba(40,80,200,0.8);color:white}
+.res-no{background:rgba(26,120,70,0.82);color:white}
+
+.card-body{padding:8px 9px 9px}
+.card-name{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;line-height:1.2;color:var(--dark);margin-bottom:2px}
+.card-area{font-size:9px;color:rgba(0,0,0,0.38);margin-bottom:5px;font-weight:400}
+.card-desc{font-size:10.5px;color:rgba(0,0,0,0.52);line-height:1.45;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* CARD ACTIONS */
+.card-actions{display:flex;gap:4px;flex-wrap:wrap}
+.ca-btn{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:6px;font-size:9.5px;font-weight:600;text-decoration:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.02em;transition:opacity 0.12s}
+.ca-btn:active{opacity:0.7}
+.ca-map{background:#EDF4FF;color:#1A5A9A}
+.ca-ig{background:#FFF0F8;color:#AA1060}
+.ca-tips{background:#F5F3FF;color:#4A35AA;border:1px solid rgba(74,53,170,0.12)}
+.ca-tips.open{background:#EDE9FF}
+
+/* TIPS PANEL */
+.tips-panel{font-size:10.5px;color:rgba(0,0,0,0.52);background:#FDFAFF;border-radius:6px;padding:6px 8px;margin:5px 0 0;line-height:1.5;font-style:italic;border-left:2px solid rgba(100,80,200,0.3);display:none}
+.tips-panel.open{display:block}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:rgba(0,0,0,0.3)}
+.empty .em{font-size:34px;margin-bottom:10px}
+.empty p{font-size:13px;line-height:1.6}
+
+/* BOTTOM FAB */
+.fab{position:fixed;bottom:20px;right:16px;z-index:200;width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 16px rgba(0,0,0,0.25);transition:transform 0.15s}
+.fab:active{transform:scale(0.94)}
+.fab.paris{background:var(--paris-red)}
+.fab.london{background:var(--london-red)}
+
+/* ADD MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-sheet{width:100%;background:white;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:88dvh;overflow-y:auto}
+.modal-handle{width:32px;height:3px;background:rgba(0,0,0,0.1);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin-bottom:14px}
+.fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(0,0,0,0.38);margin-bottom:4px;display:block}
+.fi{width:100%;border:1px solid rgba(0,0,0,0.12);border-radius:8px;padding:9px 11px;font-size:13px;font-family:'Inter',sans-serif;color:var(--dark);outline:none;background:#FDFAF5;margin-bottom:10px}
+.fi:focus{border-color:rgba(200,169,110,0.5)}
+.frow{display:flex;gap:8px}
+.frow .fg{flex:1}
+.mbtns{display:flex;gap:8px;margin-top:14px}
+.mbtn-p{flex:1;padding:12px;background:var(--dark);color:var(--gold);border:none;border-radius:10px;font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer}
+.mbtn-s{padding:12px 16px;background:#F5F3EE;border:none;border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="city-bar">
+  <button class="city-btn active" data-city="paris" onclick="switchCity('paris')">
+    <span class="city-flag">🗼</span>Paris
+  </button>
+  <button class="city-btn" data-city="london" onclick="switchCity('london')">
+    <span class="city-flag">🇬🇧</span>London
+  </button>
+</div>
+
+<div class="header paris" id="hdr">
+  <div class="header-top">
+    <div class="header-title">
+      <h1 id="htitle">Paris 🌙✨</h1>
+      <p id="hsub">Saeed & Wife — Honeymoon Guide</p>
+    </div>
+    <div class="place-count">
+      <div class="num" id="pcount">0</div>
+      <div class="lbl">Places</div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="srch" placeholder="Search places, areas…" oninput="render()">
+  </div>
+  <div class="cat-tabs" id="catTabs"></div>
+</div>
+
+<div class="main" id="main">
+  <div id="cards"></div>
+</div>
+
+<button class="fab paris" id="fab" onclick="openModal()">＋</button>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add a Place</div>
+    <div class="frow">
+      <div class="fg"><label class="fl">City</label><select class="fi" id="mCity"><option value="paris">🗼 Paris</option><option value="london">🇬🇧 London</option></select></div>
+      <div class="fg"><label class="fl">Category</label><select class="fi" id="mCat"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Café</option><option>Bakery</option><option>Attraction</option><option>Museum</option><option>Park</option><option>Shopping</option><option>Photo Spot</option><option>Romantic</option><option>Hidden Gem</option><option>Halal</option></select></div>
+    </div>
+    <label class="fl">Place Name *</label><input class="fi" id="mName" placeholder="e.g. Sketch London">
+    <label class="fl">Area / Neighbourhood</label><input class="fi" id="mArea" placeholder="e.g. Mayfair">
+    <label class="fl">Description</label><input class="fi" id="mDesc" placeholder="What makes it special?">
+    <label class="fl">Tips / Notes for wife</label><input class="fi" id="mTips" placeholder="Insider tip…">
+    <div class="frow">
+      <div class="fg"><label class="fl">Google Maps URL</label><input class="fi" id="mMaps" placeholder="https://maps.google.com/…"></div>
+      <div class="fg"><label class="fl">Instagram handle</label><input class="fi" id="mIg" placeholder="@placename"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Reservation?</label><select class="fi" id="mRes"><option value="No">No</option><option value="Yes">Yes — Required</option><option value="Recommended">Recommended</option></select></div>
+      <div class="fg"><label class="fl">Halal?</label><select class="fi" id="mHalal"><option value="">No info</option><option value="yes">✅ Halal certified</option><option value="friendly">🟡 Halal friendly</option></select></div>
+    </div>
+    <div class="mbtns">
+      <button class="mbtn-s" onclick="closeModal()">Cancel</button>
+      <button class="mbtn-p" onclick="savePlace()">Save Place</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── PHOTO LIBRARY (Unsplash by category) ──────────────────────────
+const PHOTOS = {
+  Breakfast:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=75',
+  Lunch:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=75',
+  Dinner:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=75',
+  'Luxury Restaurant':'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=75',
+  'Halal Restaurant':'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=75',
+  Halal:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=75',
+  Restaurant:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=75',
+  Café:'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&q=75',
+  Bakery:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=75',
+  Museum:'https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=400&q=75',
+  Attraction:'https://images.unsplash.com/photo-1499856871958-5b9357218650?w=400&q=75',
+  Park:'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&q=75',
+  Shopping:'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=75',
+  'Photo Spot':'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=75',
+  Romantic:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=75',
+  'Hidden Gem':'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&q=75',
+  Viewpoint:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=75',
+  default:'https://images.unsplash.com/photo-1499856871958-5b9357218650?w=400&q=75',
+};
+
+const OVERRIDE_PHOTOS = {
+  'Eiffel Tower':'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400&q=75',
+  'Louvre Museum':'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=75',
+  'Palace of Versailles':'https://images.unsplash.com/photo-1565117082646-f05cbada87d9?w=400&q=75',
+  "Claude Monet's House & Gardens":'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=75',
+  'Disneyland Paris':'https://images.unsplash.com/photo-1569428034239-f9565e32e224?w=400&q=75',
+  'Montmartre':'https://images.unsplash.com/photo-1554939437-85ef8046b648?w=400&q=75',
+  'Sacré-Cœur':'https://images.unsplash.com/photo-1550340499-a6c60fc8287c?w=400&q=75',
+  'Basilique du Sacré-Cœur':'https://images.unsplash.com/photo-1550340499-a6c60fc8287c?w=400&q=75',
+  'Hyde Park':'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=400&q=75',
+  'Richmond Park':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=75',
+  'Buckingham Palace':'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400&q=75',
+  'London Eye':'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=75',
+  'Harrods':'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=75',
+  'Borough Market':'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=75',
+  'Natural History Museum':'https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=400&q=75',
+  'Pont des Arts':'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&q=75',
+  "Angelina Paris":'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&q=75',
+  'sketch':'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=75',
+  'Seven Sisters Cliffs':'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=75',
+  'Hampton Court Palace':'https://images.unsplash.com/photo-1565117082646-f05cbada87d9?w=400&q=75',
+};
+
+// ── CATEGORY META ─────────────────────────────────────────────────
+const CAT = {
+  'Breakfast':    {bg:'#FFF8EC',tc:'#92580A',emoji:'🥞',label:'Breakfast'},
+  'Lunch':        {bg:'#FFF1F0',tc:'#B52A2A',emoji:'🍽',label:'Lunch'},
+  'Dinner':       {bg:'#F5F0FF',tc:'#5B3EA6',emoji:'🌙',label:'Dinner'},
+  'Luxury Restaurant':{bg:'#FFF8EC',tc:'#7A5010',emoji:'⭐',label:'Luxury'},
+  'Halal Restaurant': {bg:'#EDFAF3',tc:'#1A7A4A',emoji:'🌿',label:'Halal'},
+  'Halal':        {bg:'#EDFAF3',tc:'#1A7A4A',emoji:'🌿',label:'Halal'},
+  'Restaurant':   {bg:'#FFF1F0',tc:'#B52A2A',emoji:'🍽',label:'Restaurant'},
+  'Café':         {bg:'#FDF3E7',tc:'#7A4F1A',emoji:'☕',label:'Café'},
+  'Bakery':       {bg:'#FDF3E7',tc:'#7A4F1A',emoji:'🥐',label:'Bakery'},
+  'Museum':       {bg:'#EFF6FF',tc:'#1D5FA8',emoji:'🏛',label:'Museum'},
+  'Attraction':   {bg:'#FFF5F8',tc:'#A82060',emoji:'✨',label:'Attraction'},
+  'Park':         {bg:'#EDFAF3',tc:'#1A7A4A',emoji:'🌿',label:'Park'},
+  'Shopping':     {bg:'#F0F8FF',tc:'#1A5C8F',emoji:'🛍',label:'Shopping'},
+  'Photo Spot':   {bg:'#FFFBEC',tc:'#7A6010',emoji:'📸',label:'Photo Spot'},
+  'Romantic':     {bg:'#FFF0F5',tc:'#A0205A',emoji:'💕',label:'Romantic'},
+  'Hidden Gem':   {bg:'#F2F0FF',tc:'#4A3A9A',emoji:'💎',label:'Hidden Gem'},
+  'Viewpoint':    {bg:'#FFF8EC',tc:'#7A4500',emoji:'🌅',label:'Viewpoint'},
+  'default':      {bg:'#F5F5F5',tc:'#505050',emoji:'📍',label:'Place'},
+};
+function cm(cat){return CAT[cat]||CAT.default}
+
+// ── DATA ──────────────────────────────────────────────────────────
+const PARIS=[
+  {sec:'🥞 BREAKFAST & MORNING'},
+  {name:"Du Pain et des Idées",cat:'Bakery',area:"10th arr.",desc:"Award-winning artisan bakery. Paris's best escargots and breads.",tips:"Queue early — sells out fast. Come before 9am.",res:'No',halal:'friendly',ig:'@dupainetdesidees',maps:'https://maps.google.com/?q=Du+Pain+et+des+Idees+Paris'},
+  {name:"Café de Flore (Breakfast)",cat:'Breakfast',area:"6th arr.",desc:"Legendary Art Deco café since 1887. Classic Parisian morning.",tips:"Come before 9am for a terrace seat. Hot chocolate is famous.",res:'No',halal:'friendly',ig:'@cafedeflore_paris',maps:'https://maps.google.com/?q=Cafe+de+Flore+Paris'},
+  {name:"Angelina Paris",cat:'Breakfast',area:"1st arr. — Tuileries",desc:"Historic 1903 tearoom. Famous Mont-Blanc & hot chocolate.",tips:"The hot chocolate (L'Africain) is unmissable. Queue on weekends.",res:'Recommended',maps:'https://maps.google.com/?q=Angelina+Paris'},
+  {name:"Dreamin' Man",cat:'Café',area:"11th arr.",desc:"Minimalist specialty coffee inspired by Japanese culture.",tips:"No alcohol. Calm and focused atmosphere.",res:'No',maps:'https://maps.google.com/?q=Dreamin+Man+Coffee+Paris'},
+  {name:"Harvest Coffee",cat:'Café',area:"2nd arr.",desc:"Bright specialty coffee shop with excellent espresso & brunch.",tips:"Halal-friendly food. Arrive early on weekends.",res:'No',halal:'friendly',maps:'https://maps.google.com/?q=Harvest+Coffee+Paris'},
+  {name:"Blondie Coffee",cat:'Café',area:"9th arr. — SoPi",desc:"Specialty coffee and brunch in trendy South Pigalle.",tips:"Very Instagrammable. Halal-friendly.",res:'No',halal:'friendly',ig:'@blondiecoffee_paris',maps:'https://maps.google.com/?q=Blondie+Coffee+Paris'},
+
+  {sec:'🍽 LUNCH & CASUAL DINING'},
+  {name:"Ferdi",cat:'Lunch',area:"1st arr. — Madeleine",desc:"Beloved Parisian bistro. Famous for burgers and celebrity clientele.",tips:"Famous for Wagyu beef burgers.",res:'Yes',ig:'@ferdi_paris',maps:'https://maps.google.com/?q=Ferdi+Restaurant+Paris'},
+  {name:"Sol Semilla",cat:'Lunch',area:"10th arr.",desc:"Organic vegan/vegetarian with Latin American superfoods.",tips:"100% plant-based — naturally halal-friendly.",res:'Recommended',halal:'friendly',ig:'@solsemilla_paris',maps:'https://maps.google.com/?q=Sol+Semilla+Paris'},
+  {name:"DOKIDOKI Louvre",cat:'Lunch',area:"1st arr.",desc:"Japanese handroll bar near the Louvre. Excellent quality.",res:'No',maps:'https://maps.google.com/?q=DOKIDOKI+Louvre+Paris'},
+  {name:"Junk Burger",cat:'Lunch',area:"Multiple locations",desc:"Popular halal smash burger chain. Casual and affordable.",tips:"Fully halal-certified. Multiple Paris locations.",res:'No',halal:'yes',maps:'https://maps.google.com/?q=Junk+Burger+Paris'},
+  {name:"L'Atelier Libanais",cat:'Lunch',area:"Multiple locations",desc:"Halal Lebanese chain with mezze, kebabs and aromatic rice.",tips:"Halal-certified. Multiple Paris locations.",res:'No',halal:'yes',maps:"https://maps.google.com/?q=L+Atelier+Libanais+Paris"},
+
+  {sec:'🌙 DINNER & FINE DINING'},
+  {name:"Gigi Paris",cat:'Dinner',area:"7th arr. — Invalides",desc:"Upscale Italian with Eiffel Tower & Invalides views. Halal.",tips:"Confirmed halal. Terrace dining is magical. Book weeks ahead.",res:'Yes',halal:'yes',ig:'@gigi_paris',maps:'https://maps.google.com/?q=Gigi+Paris+Restaurant'},
+  {name:"Loulou Paris",cat:'Dinner',area:"1st arr. — Tuileries",desc:"Italian inside the Musée des Arts Décoratifs. Tuileries terrace.",tips:"Reserve 2–3 weeks ahead. Must have: truffle pasta.",res:'Yes',ig:'@loulou_paris',maps:'https://maps.google.com/?q=Loulou+Restaurant+Paris'},
+  {name:"Girafe",cat:'Dinner',area:"16th arr. — Trocadéro",desc:"Seafood with one of the best direct Eiffel Tower terrace views.",tips:"Views are worth the price. Ask about halal options.",res:'Yes',ig:'@restaurantgirafe',maps:'https://maps.google.com/?q=Restaurant+Girafe+Paris'},
+  {name:"Monsieur Bleu",cat:'Dinner',area:"16th arr.",desc:"Art Deco brasserie inside Palais de Tokyo with Eiffel views.",tips:"Beautiful interior. Check halal options when booking.",res:'Yes',ig:'@monsieurbleu_paris',maps:'https://maps.google.com/?q=Monsieur+Bleu+Paris'},
+  {name:"Café de la Paix",cat:'Dinner',area:"9th arr. — Opéra",desc:"Grand historic café beside the Opéra Garnier. Belle Époque.",res:'Recommended',ig:'@cafedelapaix_paris',maps:'https://maps.google.com/?q=Cafe+de+la+Paix+Paris'},
+  {name:"Dior Café",cat:'Dinner',area:"8th arr. — Avenue Montaigne",desc:"Elegant café inside the Dior flagship. Pastries in couture.",tips:"Dress elegantly. Book ahead.",res:'Yes',ig:'@dior',maps:'https://maps.google.com/?q=Dior+Cafe+Paris'},
+  {name:"Le Jules Verne",cat:'Dinner',area:"7th arr. — Eiffel Tower 2F",desc:"Michelin-starred restaurant inside the Eiffel Tower itself.",tips:"Book months in advance. Confirm halal when booking.",res:'Yes',maps:'https://maps.google.com/?q=Le+Jules+Verne+Eiffel+Tower+Paris'},
+
+  {sec:'🌿 HALAL — CERTIFIED SPOTS'},
+  {name:"Institut du Monde Arabe",cat:'Halal',area:"5th arr.",desc:"Rooftop restaurant with halal Lebanese cuisine. Panoramic Seine views.",tips:"Muslim-owned institution. Ziryab restaurant on 9th floor.",res:'Recommended',halal:'yes',maps:'https://maps.google.com/?q=Institut+du+Monde+Arabe+Paris'},
+  {name:"Restaurant Argana",cat:'Halal',area:"20th arr.",desc:"Authentic Moroccan halal restaurant. Warm family atmosphere.",res:'No',halal:'yes',maps:'https://maps.google.com/?q=Restaurant+Argana+Paris'},
+
+  {sec:'🥐 BAKERIES & DESSERTS'},
+  {name:"D'Isabella Bakery",cat:'Bakery',area:"Paris",desc:"Artisan bakery known for beautiful cakes and pastries.",tips:"Halal-friendly options available.",res:'No',halal:'friendly',ig:'@disabellabakery',maps:'https://maps.google.com/?q=D+Isabella+Bakery+Paris'},
+  {name:"Café Marly",cat:'Café',area:"1st arr. — Louvre",desc:"Chic café inside the Louvre's Richelieu wing. Glass pyramid views.",tips:"Perfect after the Louvre visit.",res:'Recommended',ig:'@cafe_marly',maps:'https://maps.google.com/?q=Cafe+Marly+Louvre+Paris'},
+
+  {sec:'✨ MUST-SEE ATTRACTIONS'},
+  {name:"Eiffel Tower",cat:'Attraction',area:"7th arr.",desc:"Paris's iconic iron tower. Summit offers 360° city views.",tips:"Book summit tickets weeks ahead. Sparkling light show every hour after dark.",res:'Yes',ig:'@toureiffel',maps:'https://maps.google.com/?q=Eiffel+Tower+Paris'},
+  {name:"Louvre Museum",cat:'Museum',area:"1st arr.",desc:"World's largest art museum. Home to the Mona Lisa.",tips:"Book timed entry online. Allocate 3–4 hours minimum.",res:'Yes',maps:'https://maps.google.com/?q=Louvre+Museum+Paris'},
+  {name:"Palace of Versailles",cat:'Attraction',area:"Versailles (20km SW)",desc:"Opulent royal palace of Louis XIV with spectacular gardens.",tips:"Book in advance. Full day trip recommended.",res:'Yes',ig:'@chateauversailles',maps:'https://maps.google.com/?q=Palace+of+Versailles'},
+  {name:"Claude Monet's House & Gardens",cat:'Attraction',area:"Giverny (75km NW)",desc:"Monet's famous house and water lily gardens.",tips:"Book online. Open April–November. 90-min drive from Paris.",res:'Yes',ig:'@fondationmonet',maps:'https://maps.google.com/?q=Claude+Monet+House+Giverny'},
+  {name:"Disneyland Paris",cat:'Attraction',area:"Marne-la-Vallée",desc:"Iconic Disney theme park. Rides, parades & characters.",tips:"Book FastPass online. Halal food options available.",res:'Yes',halal:'friendly',ig:'@disneylandparis',maps:'https://maps.google.com/?q=Disneyland+Paris'},
+  {name:"Montmartre",cat:'Attraction',area:"18th arr.",desc:"Bohemian hilltop with artists, windmills and village feel.",tips:"Best explored on foot. Cobbled streets — wear comfy shoes.",res:'No',ig:'@montmartre_paris',maps:'https://maps.google.com/?q=Montmartre+Paris'},
+  {name:"Basilique du Sacré-Cœur",cat:'Attraction',area:"18th arr.",desc:"Stunning white basilica at the summit of Montmartre.",tips:"Free entry. Panoramic Paris views from the steps.",res:'No',maps:'https://maps.google.com/?q=Sacre+Coeur+Paris'},
+  {name:"Grand Palais",cat:'Museum',area:"8th arr.",desc:"Magnificent Belle Époque glass & steel exhibition hall.",res:'Yes',ig:'@grandpalais',maps:'https://maps.google.com/?q=Grand+Palais+Paris'},
+  {name:"Champs-Élysées",cat:'Attraction',area:"8th arr.",desc:"Paris's most famous boulevard. Best walked at night.",res:'No',maps:'https://maps.google.com/?q=Champs+Elysees+Paris'},
+
+  {sec:'🌿 PARKS & GARDENS'},
+  {name:"Tuileries Garden",cat:'Park',area:"1st arr.",desc:"Formal French garden between the Louvre and Concorde.",tips:"Free entry. Lovely stroll between Louvre and Champs-Élysées.",res:'No',maps:'https://maps.google.com/?q=Tuileries+Garden+Paris'},
+  {name:"Jardin du Luxembourg",cat:'Park',area:"6th arr.",desc:"Beautiful formal garden with iconic green chairs.",tips:"Free entry. Central pond is an iconic Paris shot.",res:'No',maps:'https://maps.google.com/?q=Jardin+du+Luxembourg+Paris'},
+  {name:"Parc Monceau",cat:'Park',area:"8th arr.",desc:"Romantic English-style park with a colonnade and lake.",tips:"Beautiful golden light in the morning.",res:'No',maps:'https://maps.google.com/?q=Parc+Monceau+Paris'},
+  {name:"Champ de Mars",cat:'Park',area:"7th arr.",desc:"Wide public park stretching from the Eiffel Tower.",tips:"Perfect for picnics with Eiffel Tower views.",res:'No',maps:'https://maps.google.com/?q=Champ+de+Mars+Paris'},
+  {name:"Coulée Verte René-Dumont",cat:'Park',area:"12th arr.",desc:"Elevated walkway on a disused railway — the original High Line.",tips:"Quiet, green and romantic.",res:'No',maps:'https://maps.google.com/?q=Coulee+Verte+Paris'},
+
+  {sec:'🛍 SHOPPING'},
+  {name:"Galeries Lafayette",cat:'Shopping',area:"9th arr.",desc:"Paris's most iconic department store with a stained-glass dome.",tips:"Free to visit the dome. Top-floor terrace has a free Eiffel view.",res:'No',ig:'@galerieslafayette',maps:'https://maps.google.com/?q=Galeries+Lafayette+Paris'},
+  {name:"La Samaritaine",cat:'Shopping',area:"1st arr. — Pont Neuf",desc:"Legendary Art Nouveau department store reopened 2021.",tips:"The Art Nouveau interior is a sight in itself.",res:'No',ig:'@lasamaritaine',maps:'https://maps.google.com/?q=La+Samaritaine+Paris'},
+  {name:"Le Marais",cat:'Shopping',area:"3rd/4th arr.",desc:"Hip neighborhood with boutiques, vintage shops, galleries.",tips:"Walk Rue des Archives. Great for streetwear, vintage & art.",res:'No',maps:'https://maps.google.com/?q=Le+Marais+Paris'},
+  {name:"La Vallée Village",cat:'Shopping',area:"Near Disneyland",desc:"Luxury outlet with 110+ designer boutiques at discounted prices.",tips:"10 min from Disneyland by free shuttle.",res:'No',ig:'@lavalleevillage',maps:'https://maps.google.com/?q=La+Vallee+Village+Serris'},
+
+  {sec:'📸 PHOTO SPOTS & VIEWPOINTS'},
+  {name:"Trocadéro",cat:'Photo Spot',area:"16th arr.",desc:"The classic straight-on Eiffel Tower angle. Best at sunrise.",tips:"Arrive 15 min before sunrise for empty foreground.",res:'No',maps:'https://maps.google.com/?q=Trocadero+Paris'},
+  {name:"Pont de Bir-Hakeim",cat:'Photo Spot',area:"15th/16th arr.",desc:"Art Nouveau double-decker bridge. Frame the tower through iron arches.",tips:"Featured in Inception. Best at blue or golden hour.",res:'No',maps:'https://maps.google.com/?q=Pont+de+Bir-Hakeim+Paris'},
+  {name:"Av. de Camoëns",cat:'Photo Spot',area:"16th arr.",desc:"Secret residential balcony with a perfectly framed Eiffel view.",tips:"Hidden gem. Very Instagrammable. No crowds.",res:'No',maps:'https://maps.google.com/?q=Avenue+de+Camoens+Paris'},
+  {name:"Galeries Lafayette Rooftop",cat:'Viewpoint',area:"9th arr.",desc:"Free rooftop terrace with views toward the Eiffel Tower.",tips:"Completely free. Underrated panorama.",res:'No',maps:'https://maps.google.com/?q=Galeries+Lafayette+Paris+Roof+Terrace'},
+  {name:"Arc de Triomphe Rooftop",cat:'Viewpoint',area:"8th arr.",desc:"360° view from atop the Arc including the Eiffel Tower.",tips:"Book online to guarantee entry. 284 steps.",res:'Recommended',maps:'https://maps.google.com/?q=Arc+de+Triomphe+Paris'},
+
+  {sec:'💕 ROMANTIC SPOTS'},
+  {name:"Pont des Arts",cat:'Romantic',area:"1st/6th arr.",desc:"The famous Lovers' Bridge over the Seine.",tips:"Beautiful at sunset. Iconic for couple photos.",res:'No',maps:'https://maps.google.com/?q=Pont+des+Arts+Paris'},
+  {name:"Square du Vert-Galant",cat:'Romantic',area:"1st arr. — Île de la Cité",desc:"Hidden garden at the tip of Île de la Cité, embraced by the Seine.",tips:"Secret picnic spot. Very romantic.",res:'No',maps:'https://maps.google.com/?q=Square+du+Vert+Galant+Paris'},
+  {name:"Place des Vosges",cat:'Romantic',area:"3rd/4th arr.",desc:"Paris's oldest planned square. Perfect symmetrical arcades.",tips:"Charming for strolls. Beautiful in any season.",res:'No',maps:'https://maps.google.com/?q=Place+des+Vosges+Paris'},
+  {name:"Palais Royal Gardens",cat:'Romantic',area:"1st arr.",desc:"Quiet enclosed gardens and elegant arcades. No crowds.",tips:"Free entry. Perfect for an evening stroll.",res:'No',maps:'https://maps.google.com/?q=Palais+Royal+Paris'},
+
+  {sec:'💎 GIVERNY — FULL DAY'},
+  {name:"Museum of Impressionism Giverny",cat:'Museum',area:"Giverny",desc:"Dedicated to impressionist painters. Right next to Monet's.",tips:"Pair with Monet's house on the same day.",res:'No',maps:'https://maps.google.com/?q=Museum+of+Impressionism+Giverny'},
+  {name:"Au Coin du Pain'tre",cat:'Bakery',area:"Giverny",desc:"Cozy bakery on Rue Claude Monet. Sandwiches & cakes.",tips:"Opens early. Perfect for breakfast before the gardens.",res:'No',maps:"https://maps.google.com/?q=Au+Coin+du+Pain+Giverny"},
+  {name:"La Parenthèse",cat:'Lunch',area:"Giverny",desc:"French restaurant on Rue Claude Monet. Good portions.",tips:"Laid-back elegance. Great portions and fair prices.",res:'No',maps:'https://maps.google.com/?q=La+Parenthese+Giverny'},
+  {name:"Le Botanic Café",cat:'Café',area:"Giverny",desc:"Coffee shop on Rue Claude Monet. Great macarons.",tips:"Closes 6pm. Get the macarons.",res:'No',maps:'https://maps.google.com/?q=Le+Botanic+Cafe+Giverny'},
+  {name:"La Guinguette de Giverny",cat:'Lunch',area:"Giverny",desc:"Charming French restaurant with lovely outdoor terrace.",tips:"Closes at 2:30pm — go for lunch, not dinner.",res:'No',maps:'https://maps.google.com/?q=La+Guinguette+de+Giverny'},
+
+  {sec:'🌅 HIDDEN GEMS'},
+  {name:"Galerie Vivienne",cat:'Hidden Gem',area:"2nd arr.",desc:"Paris's most beautiful covered arcade from 1823. Mosaics & glass.",tips:"Free to walk through. Excellent for interior photography.",res:'No',maps:'https://maps.google.com/?q=Galerie+Vivienne+Paris'},
+  {name:"Rue Crémieux",cat:'Photo Spot',area:"12th arr.",desc:"Paris's most colorful street. Pastel-painted houses.",tips:"Best early morning (8–9am).",res:'No',maps:'https://maps.google.com/?q=Rue+Cremieux+Paris'},
+  {name:"Promenade Plantée",cat:'Hidden Gem',area:"12th arr.",desc:"Elevated walkway on a disused railway viaduct. The original High Line.",tips:"Quiet, green and romantic.",res:'No',maps:'https://maps.google.com/?q=Promenade+Plantee+Paris'},
+  {name:"Sainte-Chapelle",cat:'Museum',area:"1st arr. — Île de la Cité",desc:"Gothic chapel with the most magnificent stained-glass in the world.",tips:"10 min walk from the Louvre. Upper chapel is breathtaking.",res:'Yes',maps:'https://maps.google.com/?q=Sainte+Chapelle+Paris'},
+];
+
+const LONDON=[
+  {sec:'🥞 BREAKFAST & BRUNCH'},
+  {name:"Sunday in Brooklyn",cat:'Breakfast',area:"Marylebone",desc:"NYC-inspired brunch. Incredible ricotta pancakes. Cult following.",tips:"Weekend brunch gets busy — go on a weekday if possible.",res:'Recommended',ig:'@sundayinbrooklynuk',maps:'https://maps.google.com/?q=Sunday+in+Brooklyn+Marylebone+London'},
+  {name:"Eggslut Portobello",cat:'Breakfast',area:"Notting Hill",desc:"LA-born egg sandwich concept. Get the Slut.",tips:"Queue is worth it. Go early.",res:'No',maps:'https://maps.google.com/?q=Eggslut+Portobello+London'},
+  {name:"Granger & Co. Chelsea",cat:'Breakfast',area:"Chelsea",desc:"Australian all-day dining. Famous for ricotta hotcakes.",res:'Recommended',ig:'@grangerco',maps:'https://maps.google.com/?q=Granger+and+Co+Chelsea+London'},
+  {name:"26 Grains",cat:'Breakfast',area:"Covent Garden",desc:"Nordic-inspired porridge and brunch bowls. Unusual and delicious.",tips:"Very Instagrammable bowls.",res:'No',maps:'https://maps.google.com/?q=26+Grains+London'},
+  {name:"Jolene Bakery",cat:'Bakery',area:"Newington Green",desc:"Exceptional bakery and restaurant. Local legend.",res:'No',maps:'https://maps.google.com/?q=Jolene+Bakery+London'},
+  {name:"Sourdough Sophia",cat:'Bakery',area:"Islington",desc:"Outstanding sourdough and pastries.",res:'No',maps:'https://maps.google.com/?q=Sourdough+Sophia+Essex+Road+London'},
+  {name:"Buns From Home",cat:'Bakery',area:"Multiple",desc:"London's most hyped bakery. Incredible cinnamon buns. Sells out fast.",tips:"Go early — sells out by 10am most days.",res:'No',maps:'https://maps.google.com/?q=Buns+From+Home+bakery+London'},
+
+  {sec:'☕ CAFÉS & COFFEE'},
+  {name:"WatchHouse Somerset House",cat:'Café',area:"Strand",desc:"Premium specialty coffee inside the stunning Somerset House.",tips:"One of London's best coffee spots with incredible surroundings.",res:'No',maps:'https://maps.google.com/?q=WatchHouse+Somerset+House+London'},
+  {name:"Kiss The Hippo Coffee",cat:'Café',area:"Mayfair",desc:"Multi-award winning specialty coffee roaster.",tips:"Arguably London's best coffee.",res:'No',maps:'https://maps.google.com/?q=Kiss+The+Hippo+Coffee+Mayfair+London'},
+  {name:"KAYU Mayfair",cat:'Café',area:"Mayfair",desc:"Beautiful desserts, drinks and café. Very Instagrammable.",res:'No',maps:'https://maps.google.com/?q=KAYU+Mayfair+London'},
+  {name:"Blank Street Coffee",cat:'Café',area:"Multiple",desc:"NYC-born specialty coffee chain. Excellent matcha.",res:'No',maps:'https://maps.google.com/?q=Blank+Street+Coffee+London'},
+  {name:"Farm Girl",cat:'Café',area:"Notting Hill",desc:"LA-style health café. Beautiful pink interiors. Rose lattes.",tips:"Very photogenic. Açaí bowls are a must.",res:'No',ig:'@farmgirlcafe',maps:'https://maps.google.com/?q=Farm+Girl+cafe+London'},
+
+  {sec:'🍽 LUNCH & CASUAL'},
+  {name:"Heard. Burger Soho",cat:'Lunch',area:"Soho/Carnaby",desc:"Exceptional burgers in a cool Soho spot.",tips:"Walk-in friendly. Get there early for lunch.",res:'No',maps:'https://maps.google.com/?q=Heard+Burger+Soho+London'},
+  {name:"Roti Chai",cat:'Lunch',area:"Marylebone",desc:"Modern Indian street food and fine dining in one.",res:'Recommended',maps:'https://maps.google.com/?q=Roti+Chai+London'},
+  {name:"Borough Market",cat:'Lunch',area:"Southwark",desc:"London's oldest and most celebrated food market.",tips:"Go hungry. Best on Thursday–Saturday.",res:'No',maps:'https://maps.google.com/?q=Borough+Market+London'},
+  {name:"Eggslut Victoria",cat:'Lunch',area:"Victoria",desc:"Sister location to Portobello. Same incredible sandwiches.",res:'No',maps:'https://maps.google.com/?q=Eggslut+Victoria+London'},
+
+  {sec:'🌙 DINNER & FINE DINING'},
+  {name:"Berenjak Soho",cat:'Dinner',area:"Soho",desc:"Acclaimed Persian restaurant. One of London's hottest tables.",tips:"Book well ahead. Incredible kebabs and cocktails.",res:'Yes',ig:'@berenjak',maps:'https://maps.google.com/?q=Berenjak+Soho+London'},
+  {name:"Scott's",cat:'Dinner',area:"Mayfair",desc:"Iconic Mayfair seafood restaurant. Celebrity haunt. Glamorous.",tips:"Smart casual dress. Very glamorous.",res:'Yes',maps:"https://maps.google.com/?q=Scotts+Restaurant+Mayfair+London"},
+  {name:"Kutir",cat:'Dinner',area:"Chelsea",desc:"Upscale Indian in a beautiful Chelsea townhouse. 4.8★",tips:"One of the best Indian restaurants in London.",res:'Yes',maps:'https://maps.google.com/?q=Kutir+London+Chelsea'},
+  {name:"sketch",cat:'Dinner',area:"Mayfair",desc:"Iconic multi-room restaurant and art installation.",tips:"Book the Gallery (pink room) for the full experience.",res:'Yes',ig:'@sketchlondon',maps:'https://maps.google.com/?q=sketch+London+Mayfair'},
+  {name:"NAC",cat:'Dinner',area:"Chelsea",desc:"Modern French with elegant ambience.",res:'Yes',maps:'https://maps.google.com/?q=NAC+Restaurant+London'},
+
+  {sec:'✨ MUST-SEE ATTRACTIONS'},
+  {name:"Buckingham Palace",cat:'Attraction',area:"Westminster",desc:"The official London residence of the King.",tips:"Change of the Guard is free to watch.",res:'No',maps:'https://maps.google.com/?q=Buckingham+Palace+London'},
+  {name:"London Eye",cat:'Attraction',area:"South Bank",desc:"Giant Ferris wheel with panoramic London views.",tips:"Book in advance to skip queues. Amazing at night.",res:'Yes',maps:'https://maps.google.com/?q=London+Eye'},
+  {name:"Hampton Court Palace",cat:'Attraction',area:"East Molesey",desc:"Stunning Tudor royal palace with famous maze.",tips:"Half-day trip. The maze is genuinely fun!",res:'Yes',maps:'https://maps.google.com/?q=Hampton+Court+Palace+London'},
+  {name:"Seven Sisters Cliffs",cat:'Attraction',area:"East Sussex",desc:"Breathtaking white chalk cliffs on the south coast.",tips:"1.5hr from London. One of England's most dramatic views.",res:'No',maps:'https://maps.google.com/?q=Seven+Sisters+Cliffs+East+Sussex'},
+
+  {sec:'🏛 MUSEUMS & CULTURE'},
+  {name:"Natural History Museum",cat:'Museum',area:"South Kensington",desc:"World-class museum. Dinosaur gallery is unmissable.",tips:"Free entry. Stunning building inside and out.",res:'No',maps:'https://maps.google.com/?q=Natural+History+Museum+London'},
+  {name:"Saatchi Gallery",cat:'Museum',area:"Chelsea",desc:"Contemporary art in a stunning Duke of York headquarters.",tips:"Free admission. Excellent rotating exhibitions.",res:'No',maps:'https://maps.google.com/?q=Saatchi+Gallery+London'},
+  {name:"Daunt Books Marylebone",cat:'Museum',area:"Marylebone",desc:"The most beautiful bookshop in London. A long galleried room.",tips:"4.8★ — the building itself is worth seeing.",res:'No',maps:'https://maps.google.com/?q=Daunt+Books+Marylebone+London'},
+
+  {sec:'🌿 PARKS & OUTDOOR'},
+  {name:"Hyde Park",cat:'Park',area:"Central London",desc:"London's most famous royal park. 350 acres of green space.",tips:"Hire deck chairs by the Serpentine.",res:'No',maps:'https://maps.google.com/?q=Hyde+Park+London'},
+  {name:"Richmond Park",cat:'Park',area:"Richmond",desc:"Vast royal park with wild deer roaming free. 4.8★",tips:"Take the bus from central London. Deer are magical.",res:'No',maps:'https://maps.google.com/?q=Richmond+Park+London'},
+  {name:"Kensington Gardens",cat:'Park',area:"Kensington",desc:"Formal royal gardens with the Serpentine Gallery.",res:'No',maps:'https://maps.google.com/?q=Kensington+Gardens+London'},
+  {name:"The Hill Garden and Pergola",cat:'Hidden Gem',area:"Hampstead",desc:"Secret elevated garden with a long pergola. Breathtaking.",tips:"One of London's most underrated hidden gems.",res:'No',maps:'https://maps.google.com/?q=The+Hill+Garden+and+Pergola+London'},
+
+  {sec:'🛍 SHOPPING'},
+  {name:"Harrods",cat:'Shopping',area:"Knightsbridge",desc:"The world's most famous department store.",tips:"Go for the food hall even if you don't shop. Unmissable.",res:'No',maps:'https://maps.google.com/?q=Harrods+London'},
+  {name:"Selfridges",cat:'Shopping',area:"Oxford Street",desc:"London's iconic department store. Excellent food hall.",res:'No',maps:'https://maps.google.com/?q=Selfridges+London'},
+  {name:"Liberty London",cat:'Shopping',area:"Soho",desc:"Iconic Tudor building housing luxury brands and unique finds.",tips:"The building itself is worth visiting.",res:'No',ig:'@libertylondon',maps:'https://maps.google.com/?q=Liberty+London'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────
+let city='paris', activeCat='all';
+
+function data(){
+  let base=[...(city==='paris'?PARIS:LONDON)];
+  const key=city+'_extra';
+  try{const e=JSON.parse(localStorage.getItem(key)||'[]');if(e.length)base=base.concat([{sec:'⭐ MY ADDITIONS'},...e]);}catch(e){}
+  return base;
+}
+function places(){return data().filter(d=>!d.sec)}
+
+// ── CATEGORY TABS ─────────────────────────────────────────────────
+function buildTabs(){
+  const cats=[...new Set(places().map(p=>p.cat))];
+  const isL=city==='london';
+  document.getElementById('catTabs').innerHTML=
+    `<button class="cat-tab active" onclick="setCat('all',this)">✦ All</button>`+
+    cats.map(c=>{const m=cm(c);return`<button class="cat-tab" onclick="setCat('${c}',this)">${m.emoji} ${m.label}</button>`}).join('');
+}
+function setCat(c,el){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');activeCat=c;render();
+}
+
+// ── CITY SWITCH ───────────────────────────────────────────────────
+function switchCity(c){
+  city=c;activeCat='all';
+  document.getElementById('srch').value='';
+  document.querySelectorAll('.city-btn').forEach(b=>b.classList.toggle('active',b.dataset.city===c));
+  const hdr=document.getElementById('hdr');
+  const fab=document.getElementById('fab');
+  const isL=c==='london';
+  hdr.className='header '+(isL?'london':'paris');
+  fab.className='fab '+(isL?'london':'paris');
+  document.getElementById('htitle').innerHTML=isL?'<span>London</span> 🇬🇧':'Paris 🌙✨';
+  document.getElementById('hsub').textContent=isL?'Saeed & Wife — London Guide':'Saeed & Wife — Honeymoon Guide';
+  buildTabs();render();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render(){
+  const search=document.getElementById('srch').value.toLowerCase();
+  const all=data();
+  const ps=places().filter(p=>{
+    const mC=activeCat==='all'||p.cat===activeCat;
+    const mS=!search||p.name.toLowerCase().includes(search)||(p.area||'').toLowerCase().includes(search)||(p.desc||'').toLowerCase().includes(search)||(p.cat||'').toLowerCase().includes(search);
+    return mC&&mS;
+  });
+  document.getElementById('pcount').textContent=places().length;
+  const container=document.getElementById('cards');
+  if(ps.length===0){container.innerHTML=`<div class="empty"><div class="em">🔍</div><p>No places match your search.</p></div>`;return;}
+  let html='';
+  if(activeCat==='all'&&!search){
+    const secOrder=[];const secMap={};let cur='';
+    all.forEach(d=>{if(d.sec){cur=d.sec;if(!secMap[cur]){secOrder.push(cur);secMap[cur]=[];}}else if(cur)secMap[cur].push(d);});
+    secOrder.forEach(s=>{
+      const rows=secMap[s];if(!rows||!rows.length)return;
+      const filtered=rows.filter(p=>{
+        const mS=!search||p.name.toLowerCase().includes(search)||(p.area||'').toLowerCase().includes(search)||(p.desc||'').toLowerCase().includes(search);
+        return mS;
+      });
+      if(!filtered.length)return;
+      html+=`<div class="section-label"><div class="line"></div><div class="text">${s}</div><div class="line"></div></div>`;
+      html+=`<div class="grid">`;
+      filtered.forEach(p=>{html+=card(p);});
+      html+=`</div>`;
+    });
+  }else{
+    html=`<div class="grid">`;ps.forEach(p=>{html+=card(p);});html+=`</div>`;
+  }
+  container.innerHTML=html;
+}
+
+function card(p){
+  const m=cm(p.cat);
+  const photo=OVERRIDE_PHOTOS[p.name]||(PHOTOS[p.cat]||PHOTOS.default);
+  const resHtml=p.res==='Yes'?`<div class="res-badge res-req">📅 Reserve</div>`:
+                p.res==='Recommended'?`<div class="res-badge res-rec">💡 Recommended</div>`:
+                p.res==='No'?`<div class="res-badge res-no">✓ Walk-in</div>`:'';
+  const halalBadge=p.halal==='yes'?`<div class="halal-badge">🌿 HALAL</div>`:
+                   p.halal==='friendly'?`<div class="halal-badge" style="background:rgba(130,110,30,0.88)">🟡 FRIENDLY</div>`:'';
+  const mapBtn=p.maps?`<a href="${p.maps}" target="_blank" class="ca-btn ca-map">🗺</a>`:'';
+  const igHandle=p.ig?(p.ig.startsWith('@')?p.ig.slice(1):p.ig):'';
+  const igBtn=igHandle?`<a href="instagram://user?username=${igHandle}" onclick="if(!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){this.href='https://instagram.com/${igHandle}';}" class="ca-btn ca-ig" target="_blank">📷</a>`:'';
+  const tid='t_'+p.name.replace(/[^a-z0-9]/gi,'_');
+  const tipsBtn=p.tips?`<button class="ca-btn ca-tips" onclick="toggleTips('${tid}',this)">💬</button>`:'';
+  return`<div class="card">
+  <div class="card-img-inner" style="background-image:url(${photo})">
+    <div class="cat-badge" style="background:${m.bg};color:${m.tc}">${m.emoji} ${m.label}</div>
+    ${halalBadge}${resHtml}
+  </div>
+  <div class="card-body">
+    <div class="card-name">${p.name}</div>
+    <div class="card-area">${p.area||''}</div>
+    <div class="card-desc">${p.desc||''}</div>
+    ${p.tips?`<div class="tips-panel" id="${tid}">${p.tips}</div>`:''}
+    <div class="card-actions">${mapBtn}${igBtn}${tipsBtn}</div>
+  </div>
+</div>`;
+}
+
+function toggleTips(id,btn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.toggle('open');btn.classList.toggle('open');
+}
+
+// ── ADD PLACE ─────────────────────────────────────────────────────
+function openModal(){document.getElementById('mCity').value=city;document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function savePlace(){
+  const name=document.getElementById('mName').value.trim();
+  if(!name){alert('Please enter a name');return;}
+  const c=document.getElementById('mCity').value;
+  const p={name,cat:document.getElementById('mCat').value,area:document.getElementById('mArea').value.trim(),desc:document.getElementById('mDesc').value.trim(),tips:document.getElementById('mTips').value.trim(),maps:document.getElementById('mMaps').value.trim(),ig:document.getElementById('mIg').value.trim(),res:document.getElementById('mRes').value,halal:document.getElementById('mHalal').value,userAdded:true};
+  try{const k=c+'_extra';const e=JSON.parse(localStorage.getItem(k)||'[]');e.push(p);localStorage.setItem(k,JSON.stringify(e));}catch(e){}
+  closeModal();['mName','mArea','mDesc','mTips','mMaps','mIg'].forEach(i=>document.getElementById(i).value='');
+  if(c===city){buildTabs();render();}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+buildTabs();render();
+</script>
+</body>
+</html>
