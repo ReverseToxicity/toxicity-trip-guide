@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Saeed & Wife — Trip Guide</title>
+<title>Saeed & Salha — Trip Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#FDFAF5;--dark:#12100A;--gold:#C8A96E;}
@@ -117,7 +117,7 @@ body{display:flex;flex-direction:column;height:100dvh}
   <div class="header-top">
     <div class="header-title">
       <h1 id="htitle">Paris 🌙✨</h1>
-      <p id="hsub">Saeed & Wife — Honeymoon Guide</p>
+      <p id="hsub">Saeed & Salha — Honeymoon Guide</p>
     </div>
     <div class="place-count"><div class="num" id="pcount">0</div><div class="lbl">Places</div></div>
   </div>
@@ -426,7 +426,7 @@ function switchCity(c){
   const hdr=document.getElementById('hdr');hdr.className='header '+(isL?'london':'paris');
   document.getElementById('fab').className='fab '+(isL?'london':'paris');
   document.getElementById('htitle').innerHTML=isL?'<span>London</span> 🇬🇧':'Paris 🌙✨';
-  document.getElementById('hsub').textContent=isL?'Saeed & Wife — London Guide':'Saeed & Wife — Honeymoon Guide';
+  document.getElementById('hsub').textContent=isL?'Saeed & Salha — London Guide':'Saeed & Salha — Honeymoon Guide';
   buildTabs();render();
 }
 
