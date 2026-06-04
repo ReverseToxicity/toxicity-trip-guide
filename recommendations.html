@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Paris — Recommendations</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FDFAF5;--dark:#12100A;--gold:#C8A96E;--red:#BF3B3B;--green:#1A7A4A;--purple:#4A35AA;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark)}
+body{display:flex;flex-direction:column;height:100dvh}
+.header{background:linear-gradient(160deg,#1A0E0E,#0D0905);padding:14px 16px 12px;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,0.35)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.header-title h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;line-height:1;color:#E8C87A}
+.header-title p{font-size:9px;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.12em;text-transform:uppercase}
+.badge{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;text-align:center}
+.badge .num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--gold);line-height:1}
+.badge .lbl{font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase}
+
+/* Filter tabs */
+.filter-tabs{display:flex;gap:5px;overflow-x:auto;padding:10px 16px 0;scrollbar-width:none;flex-shrink:0;background:linear-gradient(160deg,#1A0E0E,#0D0905);padding-bottom:12px}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{white-space:nowrap;padding:5px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;flex-shrink:0}
+.filter-tab.active{background:var(--red);border-color:var(--red);color:white;font-weight:600}
+
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 30px}
+.back-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:rgba(0,0,0,0.4);text-decoration:none;margin-bottom:14px;font-weight:500}
+
+.sec-label{display:flex;align-items:center;gap:8px;margin:16px 0 8px}
+.sec-label .line{flex:1;height:1px;background:rgba(0,0,0,0.07)}
+.sec-label .text{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,0,0,0.28);white-space:nowrap}
+
+/* Rec cards — full width list style */
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec-card{background:white;border-radius:14px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 8px rgba(0,0,0,0.05);overflow:hidden;display:flex;gap:0;cursor:pointer;transition:transform 0.12s}
+.rec-card:active{transform:scale(0.98)}
+.rec-card-accent{width:5px;flex-shrink:0}
+.rec-card-body{flex:1;padding:11px 12px 11px 11px;min-width:0}
+.rec-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px}
+.rec-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--dark);line-height:1.1}
+.rec-area{font-size:9px;color:rgba(0,0,0,0.35);margin-bottom:5px}
+.rec-desc{font-size:10.5px;color:rgba(0,0,0,0.52);line-height:1.45;margin-bottom:7px}
+.rec-badges{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:700}
+.tag-halal{background:rgba(26,122,74,0.1);color:var(--green)}
+.tag-friendly{background:rgba(160,130,20,0.1);color:#7A6010}
+.tag-must{background:rgba(191,59,59,0.1);color:var(--red)}
+.tag-cat{background:rgba(0,0,0,0.05);color:rgba(0,0,0,0.45)}
+.rec-actions{display:flex;gap:5px;margin-top:8px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;font-size:14px;transition:opacity 0.12s;flex-shrink:0}
+.icon-btn:active{opacity:0.65}
+.btn-maps{background:#E8F0FE}
+.btn-ig{background:#FFF0F5}
+.maps-svg{width:16px;height:16px;display:block}
+.ig-svg{width:15px;height:15px;display:block}
+
+.empty{text-align:center;padding:40px 20px;color:rgba(0,0,0,0.3)}
+.empty .em{font-size:34px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div class="header-title">
+      <h1>⭐ Recommendations</h1>
+      <p>Saeed & Wife — Paris Must-Dos</p>
+    </div>
+    <div class="badge"><div class="num" id="rcount">0</div><div class="lbl">Places</div></div>
+  </div>
+</div>
+<div class="filter-tabs" id="filterTabs"></div>
+<div class="main">
+  <a class="back-link" href="index.html">← Back to Home</a>
+  <div id="recList" class="rec-list"></div>
+</div>
+<script>
+const MAPS_SVG=`<svg class="maps-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#34A853"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13V2z" fill="#4285F4"/><circle cx="12" cy="9" r="2.5" fill="white"/></svg>`;
+const IG_SVG=`<svg class="ig-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="ig2" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs><rect width="24" height="24" rx="6" fill="url(#ig2)"/><rect x="6" y="6" width="12" height="12" rx="3.5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="none" stroke="white" stroke-width="1.5"/><circle cx="16.5" cy="7.5" r="0.8" fill="white"/></svg>`;
+
+const RECS=[
+  // 🍽️ RESTAURANTS
+  {cat:'Restaurant',name:'Miznon',area:'Le Marais',desc:'Legendary Israeli street food — pitas stuffed with roasted veg and meats. Always packed, always worth it. Halal-friendly menu.',halal:'yes',must:true,maps:'https://maps.google.com/?q=Miznon+Paris',ig:'miznon',accent:'#BF3B3B'},
+  {cat:'Restaurant',name:'L\'As du Fallafel',area:'Le Marais',desc:'Possibly the most famous falafel spot in Paris. The queue moves fast. Get the special with everything.',halal:'yes',must:true,maps:'https://maps.google.com/?q=As+du+Fallafel+Paris',ig:'',accent:'#BF3B3B'},
+  {cat:'Restaurant',name:'Blend Hamburger',area:'Le Marais',desc:'Premium halal burgers with brioche buns. One of the best burgers in Paris, full stop.',halal:'yes',must:false,maps:'https://maps.google.com/?q=Blend+Hamburger+Paris',ig:'blendhamburger',accent:'#BF3B3B'},
+  {cat:'Restaurant',name:'Brasserie Lola',area:'Saint-Germain',desc:'Classic French brasserie atmosphere. Great steaks and French classics. Confirm halal options when booking.',halal:'friendly',must:false,maps:'https://maps.google.com/?q=Brasserie+Lola+Paris',ig:'',accent:'#BF3B3B'},
+  {cat:'Restaurant',name:'Hank Burger',area:'Canal Saint-Martin',desc:'100% vegan & halal burgers. Surprisingly incredible — even non-vegans love it.',halal:'yes',must:false,maps:'https://maps.google.com/?q=Hank+Burger+Paris',ig:'hankburger',accent:'#BF3B3B'},
+
+  // ☕ CAFÉS & BAKERIES
+  {cat:'Café',name:'Café de Flore',area:'Saint-Germain',desc:'The most iconic café in Paris. Existentialists used to sit here. Overpriced but essential at least once.',halal:'friendly',must:true,maps:'https://maps.google.com/?q=Cafe+de+Flore+Paris',ig:'cafedeflore',accent:'#B45309'},
+  {cat:'Café',name:'Du Pain et des Idées',area:'Canal Saint-Martin',desc:'Arguably the best bakery in Paris — the pistachio-chocolate croissant is life-changing. Get there early, sells out fast.',halal:'friendly',must:true,maps:'https://maps.google.com/?q=Du+Pain+et+des+Idees+Paris',ig:'dupainetdesidees',accent:'#B45309'},
+  {cat:'Café',name:'Café Kitsuné',area:'Palais Royal',desc:'Stunning location in the Palais Royal gardens. Great specialty coffee, beautiful design.',halal:'friendly',must:false,maps:'https://maps.google.com/?q=Cafe+Kitsune+Paris',ig:'cafekitsune',accent:'#B45309'},
+  {cat:'Café',name:'Holybelly',area:'Canal Saint-Martin',desc:'Best brunch spot in Paris — Australian-style café with incredible coffee and brunches. Queue early on weekends.',halal:'friendly',must:false,maps:'https://maps.google.com/?q=Holybelly+Paris',ig:'holybelly5',accent:'#B45309'},
+  {cat:'Café',name:'Maison Landemaine',area:'Various',desc:'Outstanding local bakery chain — better croissants than most famous spots. Less touristy, more Parisian.',halal:'friendly',must:false,maps:'https://maps.google.com/?q=Maison+Landemaine+Paris',ig:'maisonlandemaine',accent:'#B45309'},
+
+  // 🏛️ SIGHTS
+  {cat:'Sightseeing',name:'Eiffel Tower',area:'7th Arrondissement',desc:'Book tickets online — skip the enormous queues. Sunset from the top is one of the most beautiful things you\'ll ever see.',halal:'',must:true,maps:'https://maps.google.com/?q=Eiffel+Tower+Paris',ig:'',accent:'#1E50C8'},
+  {cat:'Sightseeing',name:'Sacré-Cœur',area:'Montmartre',desc:'Free to enter — panoramic view of all of Paris from the steps. Best in the morning before crowds arrive.',halal:'',must:true,maps:'https://maps.google.com/?q=Sacre+Coeur+Paris',ig:'',accent:'#1E50C8'},
+  {cat:'Sightseeing',name:'Jardin du Luxembourg',area:'6th Arrondissement',desc:'Most beautiful gardens in Paris. June = peak rose bloom. Perfect for a picnic or afternoon coffee on the terrace.',halal:'',must:true,maps:'https://maps.google.com/?q=Jardin+du+Luxembourg+Paris',ig:'',accent:'#1E50C8'},
+  {cat:'Sightseeing',name:'Le Marais',area:'3rd & 4th',desc:'The coolest neighbourhood in Paris — Jewish quarter, best halal food, concept stores, beautiful architecture.',halal:'',must:true,maps:'https://maps.google.com/?q=Le+Marais+Paris',ig:'',accent:'#1E50C8'},
+  {cat:'Sightseeing',name:'Trocadéro',area:'16th Arrondissement',desc:'Best spot for the classic Eiffel Tower photo. Go at golden hour or for the night light show.',halal:'',must:true,maps:'https://maps.google.com/?q=Trocadero+Paris',ig:'',accent:'#1E50C8'},
+  {cat:'Sightseeing',name:'Palais Royal Gardens',area:'1st Arrondissement',desc:'Hidden gem — stunning colonnaded gardens in central Paris. Much quieter than Luxembourg.',halal:'',must:false,maps:'https://maps.google.com/?q=Palais+Royal+Paris',ig:'',accent:'#1E50C8'},
+
+  // 🛍️ SHOPPING
+  {cat:'Shopping',name:'Galeries Lafayette',area:'Opéra',desc:'Most beautiful department store in the world — the stained glass dome is breathtaking. Free rooftop terrace.',halal:'',must:true,maps:'https://maps.google.com/?q=Galeries+Lafayette+Paris',ig:'galerieslafayette',accent:'#7C3AED'},
+  {cat:'Shopping',name:'La Vallée Village',area:'Serris (near hotel)',desc:'Luxury outlet right next to your hotel — Armani, Boss, Versace, Longchamp at 30–70% off. Bring your passport.',halal:'',must:true,maps:'https://maps.google.com/?q=La+Vallee+Village+Serris',ig:'lavallee_village',accent:'#7C3AED'},
+  {cat:'Shopping',name:'Le Bon Marché',area:'Saint-Germain',desc:'The most curated luxury department store in Paris. La Grande Épicerie downstairs is a gourmet paradise.',halal:'',must:false,maps:'https://maps.google.com/?q=Le+Bon+Marche+Paris',ig:'lebonmarche',accent:'#7C3AED'},
+  {cat:'Shopping',name:'Champs-Élysées',area:'8th Arrondissement',desc:'Louis Vuitton flagship, Dior, Cartier, Sephora mega-store. Walk it at least once even if just for the vibe.',halal:'',must:true,maps:'https://maps.google.com/?q=Champs+Elysees+Paris',ig:'',accent:'#7C3AED'},
+  {cat:'Shopping',name:'Avenue Montaigne',area:'8th Arrondissement',desc:'Ultra-luxury street one block from Champs-Élysées. Chanel, Hermès, Valentino. The real deal.',halal:'',must:false,maps:'https://maps.google.com/?q=Avenue+Montaigne+Paris',ig:'',accent:'#7C3AED'},
+];
+
+const CATS=['All',...new Set(RECS.map(r=>r.cat))];
+const ACCENT_MAP={Restaurant:'#BF3B3B',Café:'#B45309',Sightseeing:'#1E50C8',Shopping:'#7C3AED'};
+let activeCat='All';
+
+const filterTabsEl=document.getElementById('filterTabs');
+const recListEl=document.getElementById('recList');
+
+const EMOJI={Restaurant:'🍽️',Café:'☕',Sightseeing:'🏛️',Shopping:'🛍️'};
+CATS.forEach(cat=>{
+  const btn=document.createElement('button');
+  btn.className='filter-tab'+(cat==='All'?' active':'');
+  btn.textContent=(EMOJI[cat]||'✦')+' '+cat;
+  btn.onclick=()=>{
+    document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat=cat;
+    render();
+  };
+  filterTabsEl.appendChild(btn);
+});
+
+function render(){
+  const filtered=activeCat==='All'?RECS:RECS.filter(r=>r.cat===activeCat);
+  document.getElementById('rcount').textContent=filtered.length;
+  if(!filtered.length){recListEl.innerHTML=`<div class="empty"><div class="em">🔍</div><p>Nothing here yet.</p></div>`;return;}
+  recListEl.innerHTML=filtered.map(r=>{
+    const accent=ACCENT_MAP[r.cat]||'#C8A96E';
+    const halalTag=r.halal==='yes'?`<span class="tag tag-halal">🌿 Halal</span>`:r.halal==='friendly'?`<span class="tag tag-friendly">🟡 Friendly</span>`:'';
+    const mustTag=r.must?`<span class="tag tag-must">⭐ Must Do</span>`:'';
+    const catTag=`<span class="tag tag-cat">${EMOJI[r.cat]||''} ${r.cat}</span>`;
+    const mapBtn=r.maps?`<a href="${r.maps}" target="_blank" class="icon-btn btn-maps">${MAPS_SVG}</a>`:'';
+    const igH=r.ig?(r.ig.startsWith('@')?r.ig.slice(1):r.ig):'';
+    const igBtn=igH?`<a href="instagram://user?username=${igH}" onclick="if(!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))this.href='https://instagram.com/${igH}'" class="icon-btn btn-ig" target="_blank">${IG_SVG}</a>`:'';
+    return`<div class="rec-card">
+      <div class="rec-card-accent" style="background:${accent}"></div>
+      <div class="rec-card-body">
+        <div class="rec-name">${r.name}</div>
+        <div class="rec-area">${r.area}</div>
+        <div class="rec-desc">${r.desc}</div>
+        <div class="rec-badges">${mustTag}${halalTag}${catTag}</div>
+        <div class="rec-actions">${mapBtn}${igBtn}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+render();
+</script>
+</body>
+</html>

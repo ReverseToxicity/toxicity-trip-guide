@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Paris Trip — Itinerary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FDFAF5;--dark:#12100A;--gold:#C8A96E;--red:#BF3B3B;--green:#1A7A4A;--blue:#1E50C8;--purple:#4A35AA;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark)}
+body{display:flex;flex-direction:column;height:100dvh}
+.header{background:linear-gradient(160deg,#1A0E0E,#0D0905);padding:14px 16px 0;flex-shrink:0;box-shadow:0 4px 24px rgba(0,0,0,0.35)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.header-title h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;line-height:1;color:#E8C87A}
+.header-title p{font-size:9px;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.12em;text-transform:uppercase}
+.trip-info{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;text-align:center}
+.trip-info .num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--gold);line-height:1}
+.trip-info .lbl{font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase}
+.day-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-tab{white-space:nowrap;padding:5px 12px;border-radius:99px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;flex-shrink:0}
+.day-tab.active{background:var(--red);border-color:var(--red);color:white;font-weight:600}
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 30px}
+.day-panel{display:none}.day-panel.active{display:block}
+.day-hero{border-radius:16px;overflow:hidden;margin-bottom:14px;position:relative;min-height:110px;display:flex;align-items:flex-end}
+.day-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(0,0,0,0.7) 100%)}
+.day-hero-content{position:relative;z-index:2;padding:14px}
+.day-number{font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px}
+.day-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:white;line-height:1.1}
+.weather-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.weather-pill{display:inline-flex;align-items:center;gap:5px;background:white;border:1px solid rgba(0,0,0,0.07);border-radius:99px;padding:5px 10px;font-size:11px;font-weight:500;color:rgba(0,0,0,0.6);box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.weather-pill span{font-size:14px}
+.vibe-tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.06em;margin-top:6px}
+.vibe-arrival{background:#E8F0FE;color:#1E50C8}.vibe-explore{background:#FEF3E2;color:#B45309}
+.vibe-disney{background:#FFF0F8;color:#9B1D6A}.vibe-daytrip{background:#F0FBF4;color:#166534}
+.vibe-shopping{background:#FDF4FF;color:#7C3AED}.vibe-chill{background:#FFF7ED;color:#C2410C}
+.vibe-departure{background:#F1F5F9;color:#475569}.vibe-culture{background:#FEF9EC;color:#92400E}
+.sec-label{display:flex;align-items:center;gap:8px;margin:14px 0 8px}
+.sec-label .line{flex:1;height:1px;background:rgba(0,0,0,0.07)}
+.sec-label .text{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(0,0,0,0.28);white-space:nowrap}
+.activity-list{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.activity{background:white;border-radius:12px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 6px rgba(0,0,0,0.05);padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.activity-icon{font-size:20px;flex-shrink:0;width:32px;height:32px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.activity-body{flex:1;min-width:0}
+.activity-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:var(--dark);line-height:1.2;margin-bottom:2px}
+.activity-desc{font-size:10.5px;color:rgba(0,0,0,0.5);line-height:1.45}
+.activity-time{font-size:9px;font-weight:600;color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
+.tag{display:inline-block;padding:2px 7px;border-radius:99px;font-size:8.5px;font-weight:700;margin-top:4px;margin-right:3px}
+.tag-halal{background:rgba(26,122,74,0.1);color:var(--green)}.tag-tip{background:rgba(74,53,170,0.08);color:var(--purple)}
+.tag-must{background:rgba(191,59,59,0.1);color:var(--red)}.tag-free{background:rgba(0,0,0,0.05);color:rgba(0,0,0,0.45)}
+.tips-box{background:#FDFAFF;border-left:3px solid rgba(74,53,170,0.3);border-radius:0 10px 10px 0;padding:8px 10px;margin-top:10px;font-size:10.5px;color:rgba(0,0,0,0.5);line-height:1.5;font-style:italic}
+.tips-box strong{font-style:normal;color:var(--dark);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:3px}
+.back-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:rgba(0,0,0,0.4);text-decoration:none;margin-bottom:14px;font-weight:500}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div class="header-title">
+      <h1>Paris 🌙✨</h1>
+      <p>Saeed & Wife — Day by Day</p>
+    </div>
+    <div class="trip-info"><div class="num">11</div><div class="lbl">Days</div></div>
+  </div>
+  <div class="day-tabs" id="dayTabs"></div>
+</div>
+<div class="main" id="main">
+  <a class="back-link" href="index.html">← Back to Home</a>
+  <div id="panels"></div>
+</div>
+<script>
+const DAYS=[
+  {id:1,date:'Jun 12',label:'Arrival Day',emoji:'✈️',vibe:'vibe-arrival',vibeLabel:'Arrival',
+   heroBg:'linear-gradient(135deg,#1A0E0E,#0D1520)',
+   weather:{icon:'⛅',temp:'19°C / 12°C',wind:'Light breeze',rain:'Low chance'},
+   activities:[
+     {time:'Evening',icon:'🛬',name:'Land at CDG',desc:'Flight arrives — clear immigration, grab bags, take RER A or taxi to Serris. About 45–60 min from the airport.',tags:[]},
+     {time:'Night',icon:'🏨',name:'Check In & Freshen Up',desc:'Settle into the hotel. Serris is calm and quiet — perfect first night.',tags:[]},
+     {time:'Dinner',icon:'🍽️',name:'Dinner at Val d\'Europe',desc:'10 min walk from Serris. Food court with halal options, Auchan supermarket for snacks. Keep it easy tonight.',tags:[{cls:'tag-halal',text:'Halal options'},{cls:'tag-free',text:'Easy & close'}]},
+   ],
+   tips:'First night is for rest only. Don\'t plan anything heavy — jet lag is real. Grab snacks from Auchan supermarket for the hotel room.'},
+
+  {id:2,date:'Jun 13',label:'Paris — Eiffel & Cafés',emoji:'☕',vibe:'vibe-explore',vibeLabel:'Explore',
+   heroBg:'linear-gradient(135deg,#1A0E0E,#0D0905)',
+   weather:{icon:'☀️',temp:'21°C / 13°C',wind:'Light',rain:'Very low'},
+   activities:[
+     {time:'Morning',icon:'🚆',name:'RER A to Paris',desc:'From Val d\'Europe station, 40 min direct to central Paris. Super easy.',tags:[{cls:'tag-free',text:'~€10 return'}]},
+     {time:'Morning',icon:'☕',name:'Morning Café & Croissant',desc:'Sit at a classic Parisian terrace café — order a café au lait and croissant. Watch the city wake up.',tags:[{cls:'tag-must',text:'Must do'}]},
+     {time:'Midday',icon:'🥙',name:'Halal Lunch in Paris',desc:'Great halal spots in Le Marais and near Châtelet. Check your recommendations page for the best picks.',tags:[{cls:'tag-halal',text:'Halal'}]},
+     {time:'Afternoon',icon:'🗼',name:'Eiffel Tower & Champ de Mars',desc:'Walk the Champ de Mars, take photos, enjoy the views. Book tickets in advance if going up — sunset from the top is magical.',tags:[{cls:'tag-must',text:'Book ahead'}]},
+     {time:'Evening',icon:'🌅',name:'Seine River Walk',desc:'Stroll along the Seine at golden hour — one of the most romantic things in Paris. The Eiffel sparkles every hour after dark.',tags:[{cls:'tag-must',text:'Eiffel sparkle at night'}]},
+   ],
+   tips:'Buy a carnet (10-trip metro card) or use Navigo pass. Google Maps works perfectly for all transit in Paris.'},
+
+  {id:3,date:'Jun 14',label:'Disneyland Paris 🎢',emoji:'🏰',vibe:'vibe-disney',vibeLabel:'Disney Day',
+   heroBg:'linear-gradient(135deg,#1A0533,#0D0520)',
+   weather:{icon:'☀️',temp:'22°C / 13°C',wind:'Calm',rain:'Very low'},
+   activities:[
+     {time:'Early Morning',icon:'⏰',name:'Rope Drop — Arrive at Opening',desc:'Disney opens at 9:30AM. Be at the gates 30 min early. Early birds ride everything with almost no queue.',tags:[{cls:'tag-must',text:'Go early!'}]},
+     {time:'Morning',icon:'🎢',name:'Big Rides First',desc:'Head straight for the most popular: Big Thunder Mountain, Space Mountain, Indiana Jones. Queues double by midday.',tags:[]},
+     {time:'Midday',icon:'🌮',name:'Lunch at the Park',desc:'Halal options are limited — check the Disneyland Paris app before you go for certified halal spots. Alternatively bring snacks.',tags:[{cls:'tag-halal',text:'Limited halal — plan ahead'}]},
+     {time:'Afternoon',icon:'🎠',name:'Walt Disney Studios Park',desc:'If your ticket includes both parks — Studios has Avengers Campus, Ratatouille, and Toy Story Land.',tags:[]},
+     {time:'Evening',icon:'✨',name:'Parade & Night Show',desc:'The evening parade and castle light show are unmissable. The castle sparkles beautifully. Stay until close!',tags:[{cls:'tag-must',text:'Don\'t leave early'}]},
+   ],
+   tips:'Download the Disneyland Paris app — live wait times, parade schedules, Lightning Access booking. Wear very comfortable shoes. It\'s a LOT of walking.'},
+
+  {id:4,date:'Jun 15',label:'Paris — Eiffel & Food Again',emoji:'🥐',vibe:'vibe-explore',vibeLabel:'Explore',
+   heroBg:'linear-gradient(135deg,#1A0E0E,#0D0905)',
+   weather:{icon:'🌤️',temp:'22°C / 13°C',wind:'Light',rain:'Slight chance PM'},
+   activities:[
+     {time:'Morning',icon:'☕',name:'Café Morning — Le Marais',desc:'Le Marais is the coolest neighbourhood in Paris. Independent cafés, stunning architecture, great vibe for a slow morning.',tags:[]},
+     {time:'Morning',icon:'🥐',name:'Bakery Crawl',desc:'Grab pastries from different boulangeries — compare croissants, pain au chocolat, and tarts. It\'s a whole thing in Paris.',tags:[{cls:'tag-must',text:'Very Paris'}]},
+     {time:'Midday',icon:'🥗',name:'Halal Lunch — Le Marais',desc:'Le Marais has some of the best halal restaurants in Paris. Great variety — Lebanese, French halal, Turkish.',tags:[{cls:'tag-halal',text:'Halal'}]},
+     {time:'Afternoon',icon:'🗼',name:'Trocadéro & Eiffel View',desc:'The Trocadéro terrace gives the most iconic straight-on view of the Eiffel Tower — best photo spot in the city.',tags:[{cls:'tag-must',text:'Best photo spot'}]},
+     {time:'Afternoon',icon:'🚶',name:'Pont de Bir-Hakeim',desc:'Beautiful bridge near the Eiffel Tower — great for photos, made famous by Inception. Very Instagrammable.',tags:[]},
+     {time:'Evening',icon:'🌉',name:'Dinner & Evening Walk',desc:'Eat somewhere near the river then walk back along the Seine as the city lights up.',tags:[]},
+   ],
+   tips:'This is a more relaxed Paris day — no museum queues, just the city itself. The Marais on a Saturday is particularly lively with street food and markets.'},
+
+  {id:5,date:'Jun 16',label:'Versailles Palace',emoji:'👑',vibe:'vibe-daytrip',vibeLabel:'Day Trip',
+   heroBg:'linear-gradient(135deg,#0A1A0A,#0D1505)',
+   weather:{icon:'🌤️',temp:'22°C / 13°C',wind:'Light',rain:'Low'},
+   activities:[
+     {time:'Morning',icon:'🚆',name:'Train to Versailles',desc:'RER C from Paris (~40 min) or Uber/taxi from hotel. Book Palace tickets online in advance to skip the huge queues.',tags:[{cls:'tag-must',text:'Book tickets online'}]},
+     {time:'Morning',icon:'👑',name:'Palace of Versailles',desc:'The Hall of Mirrors is unreal. The royal apartments are breathtaking. Give yourself 2–3 hours inside the palace.',tags:[{cls:'tag-must',text:'Hall of Mirrors'}]},
+     {time:'Afternoon',icon:'🌿',name:'The Gardens',desc:'Massive formal gardens — try to go on a Musical Fountains day (weekends in summer). The gardens alone take 2+ hours.',tags:[{cls:'tag-free',text:'Free on weekdays'}]},
+     {time:'Afternoon',icon:'🎠',name:'Marie Antoinette\'s Estate',desc:'The Petit Trianon and Grand Trianon are separate little palaces on the grounds — quieter and more intimate.',tags:[]},
+     {time:'Evening',icon:'🚆',name:'Head Back',desc:'Return via Paris or direct. Grab dinner near the hotel — you\'ll be beautifully tired.',tags:[]},
+   ],
+   tips:'Versailles is massive — wear comfortable shoes and bring water. Avoid Mondays (palace closed). Grand Canal is perfect for a picnic lunch.'},
+
+  {id:6,date:'Jun 17',label:'Louvre & Luxembourg Gardens',emoji:'🖼️',vibe:'vibe-culture',vibeLabel:'Culture',
+   heroBg:'linear-gradient(135deg,#1A0E0E,#0D0905)',
+   weather:{icon:'☀️',temp:'22°C / 14°C',wind:'Gentle',rain:'Low'},
+   activities:[
+     {time:'Morning',icon:'🏛️',name:'Louvre Museum',desc:'Book tickets online — skip the massive queues. Give yourself 3–4 hours. See the Mona Lisa, Venus de Milo, and the stunning glass pyramid.',tags:[{cls:'tag-must',text:'Book ahead'}]},
+     {time:'Midday',icon:'🥙',name:'Halal Lunch near Louvre',desc:'Plenty of options in the surrounding streets. The Marais is a short walk away for great halal food.',tags:[{cls:'tag-halal',text:'Halal nearby'}]},
+     {time:'Afternoon',icon:'🌳',name:'Jardin du Luxembourg',desc:'Beautiful gardens 10 min from the Louvre. Picnic, stroll, or sit by the fountain. June = peak rose bloom — absolutely stunning.',tags:[{cls:'tag-free',text:'Free entry'},{cls:'tag-must',text:'Peak bloom in June'}]},
+     {time:'Afternoon',icon:'☕',name:'Café in Saint-Germain',desc:'The area around Luxembourg is lined with iconic Parisian cafés. Order a café au lait and a tart — sit outside.',tags:[]},
+     {time:'Evening',icon:'🛍️',name:'Saint-Germain Stroll',desc:'High-end boutiques and concept stores. Great for window shopping or picking up something special.',tags:[]},
+   ],
+   tips:'The Louvre is enormous — decide which wings you want before going (don\'t try to see everything). Wednesdays & Fridays the museum stays open until 9:45PM.'},
+
+  {id:7,date:'Jun 18',label:'Chill — Val d\'Europe & Outlet',emoji:'🛍️',vibe:'vibe-chill',vibeLabel:'Chill Day',
+   heroBg:'linear-gradient(135deg,#1A0E0E,#120820)',
+   weather:{icon:'🌤️',temp:'23°C / 14°C',wind:'Light',rain:'Slight chance'},
+   activities:[
+     {time:'Morning',icon:'😴',name:'Sleep In',desc:'No alarm. Rest day. You\'ve earned it after a packed week. Slow morning at the hotel.',tags:[]},
+     {time:'Late Morning',icon:'🛒',name:'Val d\'Europe Mall',desc:'10 min walk from Serris. H&M, Uniqlo, Zara, Primark, Apple Store, Sephora, Nike, Adidas — all in one massive modern mall.',tags:[]},
+     {time:'Afternoon',icon:'👜',name:'La Vallée Village Outlet',desc:'Right next to Val d\'Europe — luxury outlet with ~120 brands: Armani, Boss, Versace, Longchamp, French brands at 30–70% off.',tags:[{cls:'tag-must',text:'Luxury outlet'}]},
+     {time:'Afternoon',icon:'🧋',name:'Coffee & Bubble Tea',desc:'Mokka inside Val d\'Europe for bubble tea. Various cafés to rest between shops.',tags:[]},
+     {time:'Evening',icon:'🍽️',name:'Dinner at the Mall',desc:'Halal-friendly options in the food court. Easy and close to the hotel.',tags:[{cls:'tag-halal',text:'Halal options'}]},
+   ],
+   tips:'Bring your passport for tax refund (détaxe) — saves significant money on big purchases. La Vallée Village requires spending in-store. Some shops prefer reservations for VIP service.'},
+
+  {id:8,date:'Jun 19',label:'Giverny — Monet\'s Garden',emoji:'🌸',vibe:'vibe-daytrip',vibeLabel:'Day Trip',
+   heroBg:'linear-gradient(135deg,#0A150A,#0A1A10)',
+   weather:{icon:'☀️',temp:'22°C / 12°C',wind:'Gentle breeze',rain:'Low'},
+   activities:[
+     {time:'Morning',icon:'🚗',name:'Drive or Tour to Giverny',desc:'~80km from Paris. Best by car (~1.5 hrs) or organised day tour from Paris. Tours depart early morning.',tags:[{cls:'tag-must',text:'Plan transport ahead'}]},
+     {time:'Midday',icon:'🌺',name:'Monet\'s House & Water Lily Gardens',desc:'The famous Japanese bridge and water lily pond — exactly like the paintings. June is peak bloom season. Book in advance.',tags:[{cls:'tag-must',text:'Peak bloom in June'}]},
+     {time:'Afternoon',icon:'🖼️',name:'Impressionist Museum',desc:'Right next to the gardens — small but excellent museum dedicated to the Impressionist movement.',tags:[]},
+     {time:'Afternoon',icon:'☕',name:'Lunch & Coffee in the Village',desc:'Giverny village has a few small charming restaurants. Simple, French, lovely.',tags:[]},
+     {time:'Evening',icon:'🚗',name:'Return — stop in Vernon',desc:'Nearby town of Vernon has a cute old bridge and market. Nice quick stop on the way back.',tags:[]},
+   ],
+   tips:'Arrive at opening (9:30AM) — gets very busy by 11AM. Morning light in the garden is magical. No halal spots in the village — eat before or bring food.'},
+
+  {id:9,date:'Jun 20',label:'Paris — Montmartre & Marais',emoji:'🎨',vibe:'vibe-explore',vibeLabel:'Explore',
+   heroBg:'linear-gradient(135deg,#1A0E0E,#0D0905)',
+   weather:{icon:'☀️',temp:'24°C / 15°C',wind:'Light',rain:'Low'},
+   activities:[
+     {time:'Morning',icon:'🥐',name:'Montmartre Bakery Crawl',desc:'Montmartre in the morning — steep streets, artists\' studios, incredible pastries from local boulangeries.',tags:[{cls:'tag-must',text:'Most beautiful area'}]},
+     {time:'Morning',icon:'⛪',name:'Sacré-Cœur',desc:'Free to enter — climb for a 360° panoramic view of all of Paris. The basilica interior is stunning.',tags:[{cls:'tag-free',text:'Free entry'},{cls:'tag-must',text:'Best city view'}]},
+     {time:'Midday',icon:'🛍️',name:'Abbesses & Local Shops',desc:'The streets around Abbesses metro are full of independent boutiques, concept stores, and vintage shops.',tags:[]},
+     {time:'Afternoon',icon:'☕',name:'Coffee in Le Marais',desc:'Head down to the Marais — the coolest neighbourhood. Independent cafés, beautiful architecture, great vibe.',tags:[]},
+     {time:'Afternoon',icon:'🥗',name:'Halal Lunch — Le Marais',desc:'Best halal selection in Paris. Check your recommendations for top picks.',tags:[{cls:'tag-halal',text:'Halal'}]},
+     {time:'Evening',icon:'🌉',name:'Last Seine Evening Walk',desc:'A final golden hour walk along the river. Watch the Eiffel Tower sparkle — it does so every hour after dark.',tags:[{cls:'tag-must',text:'Eiffel sparkle'}]},
+   ],
+   tips:'The Eiffel Tower light show: every hour from dusk until 1AM. Best spots: Trocadéro, Bir-Hakeim bridge, or Champ de Mars.'},
+
+  {id:10,date:'Jun 21',label:'Luxury Shopping Day',emoji:'💎',vibe:'vibe-shopping',vibeLabel:'Shopping',
+   heroBg:'linear-gradient(135deg,#0A0A1A,#12100A)',
+   weather:{icon:'🌤️',temp:'24°C / 15°C',wind:'Light',rain:'Low'},
+   activities:[
+     {time:'Morning',icon:'🚆',name:'Head to Paris — Champs-Élysées',desc:'The most famous shopping street in the world. Louis Vuitton flagship, Dior, Cartier, Sephora mega-store.',tags:[{cls:'tag-must',text:'Iconic'}]},
+     {time:'Morning',icon:'👜',name:'Avenue Montaigne',desc:'One block from Champs-Élysées — Chanel, Hermès, Valentino, Givenchy. The real luxury strip.',tags:[]},
+     {time:'Midday',icon:'🥗',name:'Lunch near the 8th',desc:'Great restaurants near Champs-Élysées. Ask your hotel or book in advance for somewhere nice.',tags:[]},
+     {time:'Afternoon',icon:'🏛️',name:'Galeries Lafayette',desc:'The most beautiful department store in the world — the stained glass dome alone is worth seeing. Every luxury brand. Free rooftop terrace.',tags:[{cls:'tag-must',text:'See the dome + rooftop'}]},
+     {time:'Afternoon',icon:'💄',name:'Le Bon Marché',desc:'More curated, less touristy luxury department store in Saint-Germain. Excellent food hall downstairs (La Grande Épicerie).',tags:[]},
+     {time:'Evening',icon:'🍽️',name:'Final Nice Dinner in Paris',desc:'Make tonight special — book a proper restaurant in advance. Last real evening in the city.',tags:[{cls:'tag-must',text:'Book in advance'}]},
+   ],
+   tips:'Keep all receipts for tax refund (détaxe). Spend €100+ per store. Fill in forms at the airport before departure — saves 12–20%. Passport required in store.'},
+
+  {id:11,date:'Jun 22',label:'Departure Day',emoji:'✈️',vibe:'vibe-departure',vibeLabel:'Departure',
+   heroBg:'linear-gradient(135deg,#0D1520,#060C14)',
+   weather:{icon:'🌅',temp:'19°C / 12°C',wind:'Light',rain:'N/A'},
+   activities:[
+     {time:'Very Early',icon:'⏰',name:'Wake Up — 5:00AM',desc:'Flight at 9AM, check-in closes 2 hours before. Be at CDG by 7AM. Leave Serris by 5:30–6:00AM.',tags:[{cls:'tag-must',text:'Set two alarms!'}]},
+     {time:'Early Morning',icon:'🚗',name:'Transfer to CDG',desc:'Pre-booked taxi or Uber is easiest at this hour. RER A runs from Val d\'Europe — first trains ~5:30AM, takes 45 min.',tags:[]},
+     {time:'Airport',icon:'🧾',name:'Tax Refund — Do This First',desc:'Find the Pablo/DIVA machines at CDG before check-in to validate your détaxe forms. Do this before dropping your bags.',tags:[{cls:'tag-must',text:'Before check-in!'}]},
+     {time:'Airport',icon:'🛫',name:'Check In & Security',desc:'CDG is large — allow time for security, especially in peak summer. Terminal 2 most common for European carriers.',tags:[]},
+     {time:'Airport',icon:'☕',name:'Last Paris Coffee',desc:'One final café au lait before you go 🥲',tags:[]},
+   ],
+   tips:'Set two alarms. Confirm your taxi the night before. Pack the night before — don\'t leave it to the morning. Passport in hand luggage, not checked bag!'},
+];
+
+const tabsEl=document.getElementById('dayTabs');
+const panelsEl=document.getElementById('panels');
+DAYS.forEach((day,i)=>{
+  const tab=document.createElement('button');
+  tab.className='day-tab'+(i===0?' active':'');
+  tab.innerHTML=`${day.emoji} ${day.date}`;
+  tab.onclick=()=>switchDay(i);
+  tabsEl.appendChild(tab);
+  const activitiesHTML=day.activities.map(a=>`
+    <div class="activity">
+      <div class="activity-icon">${a.icon}</div>
+      <div class="activity-body">
+        <div class="activity-time">${a.time}</div>
+        <div class="activity-name">${a.name}</div>
+        <div class="activity-desc">${a.desc}</div>
+        ${a.tags.map(t=>`<span class="tag ${t.cls}">${t.text}</span>`).join('')}
+      </div>
+    </div>`).join('');
+  const panel=document.createElement('div');
+  panel.className='day-panel'+(i===0?' active':'');
+  panel.id='panel-'+i;
+  panel.innerHTML=`
+    <div class="day-hero" style="background:${day.heroBg}">
+      <div class="day-hero-overlay"></div>
+      <div class="day-hero-content">
+        <div class="day-number">Day ${day.id} · ${day.date} June</div>
+        <div class="day-title">${day.label}</div>
+        <div><span class="vibe-tag ${day.vibe}">${day.vibeLabel}</span></div>
+      </div>
+    </div>
+    <div class="weather-row">
+      <div class="weather-pill"><span>${day.weather.icon}</span>${day.weather.temp}</div>
+      <div class="weather-pill"><span>💨</span>${day.weather.wind}</div>
+      <div class="weather-pill"><span>🌧️</span>${day.weather.rain}</div>
+    </div>
+    <div class="sec-label"><div class="line"></div><div class="text">Plan</div><div class="line"></div></div>
+    <div class="activity-list">${activitiesHTML}</div>
+    ${day.tips?`<div class="tips-box"><strong>💬 Tips</strong>${day.tips}</div>`:''}`;
+  panelsEl.appendChild(panel);
+});
+function switchDay(idx){
+  document.querySelectorAll('.day-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('.day-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  document.getElementById('main').scrollTop=0;
+  tabsEl.children[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+</script>
+</body>
+</html>
